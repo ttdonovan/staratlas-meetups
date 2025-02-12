@@ -60,7 +60,13 @@ pub mod meetups {
         profile::handle_init_identity_profile(ctx, name)
     }
 
-    pub fn create_event(ctx: Context<CreateEvent>, name: String) -> Result<()> {
-        events::handle_create_event(ctx, name)
+    pub fn create_event(
+        ctx: Context<CreateEvent>,
+        name: String,
+        year: u16,
+        month: u8,
+        day: u8,
+    ) -> Result<()> {
+        events::handle_create_event(ctx, name, year, month, day)
     }
 }

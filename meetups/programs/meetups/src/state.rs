@@ -61,12 +61,31 @@ pub struct HostProfile {
     pub identity_profile: Pubkey,
 }
 
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, InitSpace)]
+pub enum EventStatusType {
+    Pending,
+    Open,
+    Closed,
+    Cancelled,
+    Completed,
+}
+
 #[account]
 #[derive(InitSpace)]
 pub struct EventEntry {
+    pub status: EventStatusType,
     /// Address of the HostProfile account
     pub host: Pubkey,
     /// Name of the event
     #[max_len(32)]
     pub name: String,
+    pub year: u16,
+    pub month: u8,
+    pub day: u8,
+    #[max_len(32)]
+    pub location: String,
+    #[max_len(300)]
+    pub mappable_address: String,
+    pub start_time_at: u64,
+    pub end_time_at: u64,
 }
