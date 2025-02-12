@@ -42,7 +42,7 @@ pub mod meetups {
         )
     }
 
-    pub fn handle_update_events_manager_vault_owners(
+    pub fn update_events_manager_vault_owners(
         ctx: Context<UpdateEventsManagerVaultOwners>,
         dao_vault_owner: Pubkey,
         dev_vault_owner: Pubkey,
@@ -54,5 +54,13 @@ pub mod meetups {
             dev_vault_owner,
             ops_vault_owner,
         )
+    }
+
+    pub fn init_identity_profile(ctx: Context<InitIdentityProfile>, name: String) -> Result<()> {
+        profile::handle_init_identity_profile(ctx, name)
+    }
+
+    pub fn create_event(ctx: Context<CreateEvent>, name: String) -> Result<()> {
+        events::handle_create_event(ctx, name)
     }
 }
