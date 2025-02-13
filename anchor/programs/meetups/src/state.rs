@@ -63,10 +63,15 @@ pub struct HostProfile {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, InitSpace)]
 pub enum EventStatusType {
+    /// Event when 'pending' can be updated with additional information
     Pending,
+    /// Event when 'open' is open for registration
     Open,
+    /// Event when 'closed' is closed for registration (can be re-opened for registration)
     Closed,
+    /// Event when 'cancelled' is cancelled (no registration allowed)
     Cancelled,
+    /// Event when 'completed' is completed (no registration allowed)
     Completed,
 }
 

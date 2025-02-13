@@ -63,11 +63,57 @@ pub mod meetups {
     pub fn create_event(
         ctx: Context<CreateEvent>,
         event_manager_id: Pubkey,
+        year: u16,
+        month: u8,
+        day: u8,
         name: String,
+    ) -> Result<()> {
+        events::handle_create_event(ctx, event_manager_id, year, month, day, name)
+    }
+
+    pub fn update_event(
+        ctx: Context<UpdateEvent>,
+        event_manager_id: Pubkey,
+        year: u16,
+        month: u8,
+        day: u8,
+        name: String,
+        location: String,
+        mappable_address: String,
+        start_time_at: u64,
+        end_time_at: u64,
+    ) -> Result<()> {
+        events::handle_update_event(
+            ctx,
+            event_manager_id,
+            year,
+            month,
+            day,
+            name,
+            location,
+            mappable_address,
+            start_time_at,
+            end_time_at,
+        )
+    }
+
+    pub fn open_event(
+        ctx: Context<UpdateEventStatus>,
+        event_manager_id: Pubkey,
         year: u16,
         month: u8,
         day: u8,
     ) -> Result<()> {
-        events::handle_create_event(ctx, event_manager_id, name, year, month, day)
+        events::handle_open_event(ctx, event_manager_id, year, month, day)
+    }
+
+    pub fn close_event(
+        ctx: Context<UpdateEventStatus>,
+        event_manager_id: Pubkey,
+        year: u16,
+        month: u8,
+        day: u8,
+    ) -> Result<()> {
+        events::handle_close_event(ctx, event_manager_id, year, month, day)
     }
 }

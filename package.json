@@ -5,6 +5,7 @@
   "scripts": {
     "anchor": "cd anchor && anchor",
     "anchor-build": "cd anchor && anchor build && cp target/deploy/meetups.so tests/fixtures/.",
+    "anchor-format": "cd anchor && cargo fmt",
     "anchor-test": "cd anchor && anchor test --skip-deploy --skip-local-validator"
   },
   "dependencies": {

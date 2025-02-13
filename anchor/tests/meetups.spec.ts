@@ -30,7 +30,7 @@ const getFutureDate = (days: number) => {
   const day = futureDate.getDate();
 
   return [year, month, day];
-}
+};
 
 describe("meetups", () => {
   let context;
@@ -122,7 +122,7 @@ describe("meetups", () => {
     const identityProfile = await meetupsProgram.account.identityProfile.fetch(
       identityProfileAddress
     );
-    console.log(identityProfile);
+    // console.log(identityProfile);
 
     expect(identityProfile.owner).toEqual(provider.wallet.publicKey);
     expect(identityProfile.name).toEqual("Space Cadet");
@@ -155,24 +155,121 @@ describe("meetups", () => {
     );
 
     await meetupsProgram.methods
-      .createEvent(eventsManagerAddress, "Star Explorers Night Out", year, month, day)
+      .createEvent(
+        eventsManagerAddress,
+        year,
+        month,
+        day,
+        "PENDING: Star Explorer's Night Out"
+      )
       .rpc();
 
     const event = await meetupsProgram.account.eventEntry.fetch(eventAddress);
     // console.log(event);
 
-    expect(event.name).toEqual("Star Explorers Night Out");
+    expect(event.name).toEqual("PENDING: Star Explorer's Night Out");
     expect(event.location).toEqual("");
     expect(event.mappableAddress).toEqual("");
     expect(event.startTimeAt.toString()).toEqual("0");
     expect(event.endTimeAt.toString()).toEqual("0");
+    expect(event.status).toEqual({ pending: {} });
   });
 
-  // it("Update an Event", async () => {
-  //   // todo!
-  // });
+  it("Update an Event", async () => {
+    const [year, month, day] = futureDate;
 
-  // it("Open an Event", async () => {
-  //   // todo!
-  // });
+    // Get the host profile PDA
+    const [hostProfileAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("host"),
+        eventsManagerAddress.toBuffer(),
+        identityProfileAddress.toBuffer(),
+      ],
+      meetupsAddress
+    );
+
+    // Get the event PDA
+    const [eventAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("event"),
+        eventsManagerAddress.toBuffer(),
+        hostProfileAddress.toBuffer(),
+        new BN(year).toArrayLike(Buffer, "le", 2), // Buffer.from([2025 & 0xff, (2025 >> 8) & 0xff]), // year (u16) as le bytes
+        new BN(month).toArrayLike(Buffer, "le", 1), // Buffer.from([2]), // month (u8)
+        new BN(day).toArrayLike(Buffer, "le", 1), // Buffer.from([1]), // day (u8)
+      ],
+      meetupsAddress
+    );
+
+    await meetupsProgram.methods
+      .updateEvent(
+        eventsManagerAddress,
+        year,
+        month,
+        day,
+        "Star Explorer's Night Out",
+        "21st Amendment Brewery",
+        "563 2nd St, San Francisco, CA 94107",
+        new BN(1),
+        new BN(2)
+      )
+      .rpc();
+
+    const event = await meetupsProgram.account.eventEntry.fetch(eventAddress);
+    // console.log(event);
+
+    expect(event.name).toEqual("Star Explorer's Night Out");
+    expect(event.location).toEqual("21st Amendment Brewery");
+    expect(event.mappableAddress).toEqual(
+      "563 2nd St, San Francisco, CA 94107"
+    );
+    expect(event.startTimeAt.toString()).toEqual("1");
+    expect(event.endTimeAt.toString()).toEqual("2");
+    expect(event.status).toEqual({ pending: {} });
+  });
+
+  it("Open (and Close) an Event", async () => {
+    const [year, month, day] = futureDate;
+
+    // Get the host profile PDA
+    const [hostProfileAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("host"),
+        eventsManagerAddress.toBuffer(),
+        identityProfileAddress.toBuffer(),
+      ],
+      meetupsAddress
+    );
+
+    // Get the event PDA
+    const [eventAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("event"),
+        eventsManagerAddress.toBuffer(),
+        hostProfileAddress.toBuffer(),
+        new BN(year).toArrayLike(Buffer, "le", 2), // Buffer.from([2025 & 0xff, (2025 >> 8) & 0xff]), // year (u16) as le bytes
+        new BN(month).toArrayLike(Buffer, "le", 1), // Buffer.from([2]), // month (u8)
+        new BN(day).toArrayLike(Buffer, "le", 1), // Buffer.from([1]), // day (u8)
+      ],
+      meetupsAddress
+    );
+
+    await meetupsProgram.methods
+      .openEvent(eventsManagerAddress, year, month, day)
+      .rpc();
+
+    let event = await meetupsProgram.account.eventEntry.fetch(eventAddress);
+    // console.log(event);
+    expect(event.status).toEqual({ open: {} });
+
+    await meetupsProgram.methods
+      .closeEvent(eventsManagerAddress, year, month, day)
+      .rpc();
+
+    event = await meetupsProgram.account.eventEntry.fetch(eventAddress);
+    // console.log(event);
+    expect(event.status).toEqual({ closed: {} });
+
+    // todo!: re-open event
+  });
 });

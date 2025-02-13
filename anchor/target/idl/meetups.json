@@ -8,6 +8,129 @@
   },
   "instructions": [
     {
+      "name": "close_event",
+      "discriminator": [
+        117,
+        114,
+        193,
+        54,
+        49,
+        25,
+        75,
+        194
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "identity_profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "host_profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "event_manager_id"
+              },
+              {
+                "kind": "account",
+                "path": "identity_profile"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "event_manager_id"
+              },
+              {
+                "kind": "account",
+                "path": "host_profile"
+              },
+              {
+                "kind": "arg",
+                "path": "year"
+              },
+              {
+                "kind": "arg",
+                "path": "month"
+              },
+              {
+                "kind": "arg",
+                "path": "day"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "event_manager_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "year",
+          "type": "u16"
+        },
+        {
+          "name": "month",
+          "type": "u8"
+        },
+        {
+          "name": "day",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "create_event",
       "discriminator": [
         49,
@@ -123,10 +246,6 @@
           "type": "pubkey"
         },
         {
-          "name": "name",
-          "type": "string"
-        },
-        {
           "name": "year",
           "type": "u16"
         },
@@ -137,6 +256,10 @@
         {
           "name": "day",
           "type": "u8"
+        },
+        {
+          "name": "name",
+          "type": "string"
         }
       ]
     },
@@ -276,6 +399,272 @@
         {
           "name": "name",
           "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "open_event",
+      "discriminator": [
+        34,
+        149,
+        34,
+        239,
+        159,
+        216,
+        253,
+        234
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "identity_profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "host_profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "event_manager_id"
+              },
+              {
+                "kind": "account",
+                "path": "identity_profile"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "event_manager_id"
+              },
+              {
+                "kind": "account",
+                "path": "host_profile"
+              },
+              {
+                "kind": "arg",
+                "path": "year"
+              },
+              {
+                "kind": "arg",
+                "path": "month"
+              },
+              {
+                "kind": "arg",
+                "path": "day"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "event_manager_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "year",
+          "type": "u16"
+        },
+        {
+          "name": "month",
+          "type": "u8"
+        },
+        {
+          "name": "day",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "update_event",
+      "discriminator": [
+        70,
+        108,
+        211,
+        125,
+        171,
+        176,
+        25,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "identity_profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "host_profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "event_manager_id"
+              },
+              {
+                "kind": "account",
+                "path": "identity_profile"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "event_manager_id"
+              },
+              {
+                "kind": "account",
+                "path": "host_profile"
+              },
+              {
+                "kind": "arg",
+                "path": "year"
+              },
+              {
+                "kind": "arg",
+                "path": "month"
+              },
+              {
+                "kind": "arg",
+                "path": "day"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "event_manager_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "year",
+          "type": "u16"
+        },
+        {
+          "name": "month",
+          "type": "u8"
+        },
+        {
+          "name": "day",
+          "type": "u8"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "name": "mappable_address",
+          "type": "string"
+        },
+        {
+          "name": "start_time_at",
+          "type": "u64"
+        },
+        {
+          "name": "end_time_at",
+          "type": "u64"
         }
       ]
     },
@@ -441,6 +830,11 @@
       "code": 6001,
       "name": "EventNotPending",
       "msg": "Event is not pending"
+    },
+    {
+      "code": 6002,
+      "name": "EventNotOpen",
+      "msg": "Event is not open"
     }
   ],
   "types": [

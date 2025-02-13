@@ -6,4 +6,6 @@ pub enum ErrorCode {
     CustomError,
     #[msg("Event is not pending")]
     EventNotPending,
+    #[msg("Event is not open")]
+    EventNotOpen,
 }

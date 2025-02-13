@@ -14,6 +14,129 @@ export type Meetups = {
   },
   "instructions": [
     {
+      "name": "closeEvent",
+      "discriminator": [
+        117,
+        114,
+        193,
+        54,
+        49,
+        25,
+        75,
+        194
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "identityProfile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "hostProfile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "eventManagerId"
+              },
+              {
+                "kind": "account",
+                "path": "identityProfile"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "eventManagerId"
+              },
+              {
+                "kind": "account",
+                "path": "hostProfile"
+              },
+              {
+                "kind": "arg",
+                "path": "year"
+              },
+              {
+                "kind": "arg",
+                "path": "month"
+              },
+              {
+                "kind": "arg",
+                "path": "day"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "eventManagerId",
+          "type": "pubkey"
+        },
+        {
+          "name": "year",
+          "type": "u16"
+        },
+        {
+          "name": "month",
+          "type": "u8"
+        },
+        {
+          "name": "day",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "createEvent",
       "discriminator": [
         49,
@@ -129,10 +252,6 @@ export type Meetups = {
           "type": "pubkey"
         },
         {
-          "name": "name",
-          "type": "string"
-        },
-        {
           "name": "year",
           "type": "u16"
         },
@@ -143,6 +262,10 @@ export type Meetups = {
         {
           "name": "day",
           "type": "u8"
+        },
+        {
+          "name": "name",
+          "type": "string"
         }
       ]
     },
@@ -282,6 +405,272 @@ export type Meetups = {
         {
           "name": "name",
           "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "openEvent",
+      "discriminator": [
+        34,
+        149,
+        34,
+        239,
+        159,
+        216,
+        253,
+        234
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "identityProfile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "hostProfile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "eventManagerId"
+              },
+              {
+                "kind": "account",
+                "path": "identityProfile"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "eventManagerId"
+              },
+              {
+                "kind": "account",
+                "path": "hostProfile"
+              },
+              {
+                "kind": "arg",
+                "path": "year"
+              },
+              {
+                "kind": "arg",
+                "path": "month"
+              },
+              {
+                "kind": "arg",
+                "path": "day"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "eventManagerId",
+          "type": "pubkey"
+        },
+        {
+          "name": "year",
+          "type": "u16"
+        },
+        {
+          "name": "month",
+          "type": "u8"
+        },
+        {
+          "name": "day",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "updateEvent",
+      "discriminator": [
+        70,
+        108,
+        211,
+        125,
+        171,
+        176,
+        25,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "identityProfile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "hostProfile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "eventManagerId"
+              },
+              {
+                "kind": "account",
+                "path": "identityProfile"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "eventManagerId"
+              },
+              {
+                "kind": "account",
+                "path": "hostProfile"
+              },
+              {
+                "kind": "arg",
+                "path": "year"
+              },
+              {
+                "kind": "arg",
+                "path": "month"
+              },
+              {
+                "kind": "arg",
+                "path": "day"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "eventManagerId",
+          "type": "pubkey"
+        },
+        {
+          "name": "year",
+          "type": "u16"
+        },
+        {
+          "name": "month",
+          "type": "u8"
+        },
+        {
+          "name": "day",
+          "type": "u8"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "name": "mappableAddress",
+          "type": "string"
+        },
+        {
+          "name": "startTimeAt",
+          "type": "u64"
+        },
+        {
+          "name": "endTimeAt",
+          "type": "u64"
         }
       ]
     },
@@ -447,6 +836,11 @@ export type Meetups = {
       "code": 6001,
       "name": "eventNotPending",
       "msg": "Event is not pending"
+    },
+    {
+      "code": 6002,
+      "name": "eventNotOpen",
+      "msg": "Event is not open"
     }
   ],
   "types": [
