@@ -39,7 +39,7 @@ solana config set --url localhost
 
 solana config get
 
-solana-test-validator
+solana-test-validator --limit-ledger-size 1000
 solana airdrop 2
 
 solana address
@@ -66,21 +66,44 @@ anchor-cli 0.30.1
 
 ```
 anchor init meetups --template multiple
-cd meetups
+mv meetups anchor
+cd anchor
 anchor build
 ```
 
-## Meetups Dapp (Solana Dapp Template)
+### Anchor Bankrun
 
 ```
-bunx create-solana-dapp
-cd meetups-dapp
+bun init .
+bun add @coral-xyz/anchor @solana/web3.js
+bun add --dev @types/jest anchor-bankrun jest ts-jest
 bun install
-bun run dev
 
-bun install anchor-bankrun
-mkdir anchor/tests/fixtures
-cp ../meetups/target/deploy/meetups.so anchor/tests/fixtures/
+cd anchor
+mkdir -p tests/fixtures
+touch tests/meetups.spec.ts
+```
+
+## Refernce: Foobaring (Solana Dapp Template)
+
+```
+cd tmp
+bunx create-solana-dapp
+┌  create-solana-dapp 4.1.2
+│
+◇  Enter project name
+│  foobaring
+│
+◇  Select a framework
+│  Next.js
+│
+◇  Select a template
+│  next-tailwind-counter
+...
+
+cd foobaring
+bun install
+# bun run dev
 
 cd anchor
 anchor test --skip-local-validator --skip-deploy

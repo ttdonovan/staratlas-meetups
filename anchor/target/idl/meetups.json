@@ -1,0 +1,728 @@
+{
+  "address": "C14GzDxp9S1UfZk1BR1BPwHK1erFoPWkvjjFRtyf4B7L",
+  "metadata": {
+    "name": "meetups",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "create_event",
+      "discriminator": [
+        49,
+        219,
+        29,
+        203,
+        22,
+        98,
+        100,
+        87
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "events_manager",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  110,
+                  97,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "event_manager_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "identity_profile",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "host_profile",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "events_manager"
+              },
+              {
+                "kind": "account",
+                "path": "identity_profile"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "events_manager"
+              },
+              {
+                "kind": "account",
+                "path": "host_profile"
+              },
+              {
+                "kind": "arg",
+                "path": "year"
+              },
+              {
+                "kind": "arg",
+                "path": "month"
+              },
+              {
+                "kind": "arg",
+                "path": "day"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "year",
+          "type": "u16"
+        },
+        {
+          "name": "month",
+          "type": "u8"
+        },
+        {
+          "name": "day",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "init_event_manager",
+      "discriminator": [
+        238,
+        92,
+        141,
+        123,
+        185,
+        233,
+        187,
+        107
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "event_manager",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  110,
+                  97,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_manager_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "atlas_mint",
+          "type": "pubkey"
+        },
+        {
+          "name": "polis_mint",
+          "type": "pubkey"
+        },
+        {
+          "name": "usdc_mint",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "init_identity_profile",
+      "discriminator": [
+        23,
+        80,
+        230,
+        226,
+        25,
+        157,
+        72,
+        239
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "identity_profile",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  100,
+                  101,
+                  110,
+                  116,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "update_events_manager_vault_fees",
+      "discriminator": [
+        246,
+        140,
+        144,
+        56,
+        232,
+        1,
+        143,
+        156
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "event_manager_state"
+          ]
+        },
+        {
+          "name": "event_manager_state",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "dao_vault_fee",
+          "type": "u8"
+        },
+        {
+          "name": "dev_vault_fee",
+          "type": "u8"
+        },
+        {
+          "name": "ops_vault_fee",
+          "type": "u8"
+        },
+        {
+          "name": "host_profile_fee",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "update_events_manager_vault_owners",
+      "discriminator": [
+        24,
+        145,
+        105,
+        53,
+        13,
+        24,
+        79,
+        146
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "event_manager_state"
+          ]
+        },
+        {
+          "name": "event_manager_state",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "dao_vault_owner",
+          "type": "pubkey"
+        },
+        {
+          "name": "dev_vault_owner",
+          "type": "pubkey"
+        },
+        {
+          "name": "ops_vault_owner",
+          "type": "pubkey"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "EventEntry",
+      "discriminator": [
+        27,
+        213,
+        196,
+        242,
+        211,
+        215,
+        124,
+        12
+      ]
+    },
+    {
+      "name": "EventsManager",
+      "discriminator": [
+        99,
+        244,
+        21,
+        173,
+        77,
+        198,
+        170,
+        102
+      ]
+    },
+    {
+      "name": "EventsManagerState",
+      "discriminator": [
+        219,
+        38,
+        140,
+        44,
+        217,
+        161,
+        187,
+        38
+      ]
+    },
+    {
+      "name": "HostProfile",
+      "discriminator": [
+        94,
+        7,
+        161,
+        56,
+        202,
+        18,
+        30,
+        67
+      ]
+    },
+    {
+      "name": "IdentityProfile",
+      "discriminator": [
+        126,
+        105,
+        113,
+        167,
+        95,
+        50,
+        160,
+        24
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "CustomError",
+      "msg": "Custom error message"
+    },
+    {
+      "code": 6001,
+      "name": "EventNotPending",
+      "msg": "Event is not pending"
+    }
+  ],
+  "types": [
+    {
+      "name": "EventEntry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "EventStatusType"
+              }
+            }
+          },
+          {
+            "name": "host",
+            "docs": [
+              "Address of the HostProfile account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "Name of the event"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "year",
+            "type": "u16"
+          },
+          {
+            "name": "month",
+            "type": "u8"
+          },
+          {
+            "name": "day",
+            "type": "u8"
+          },
+          {
+            "name": "location",
+            "type": "string"
+          },
+          {
+            "name": "mappable_address",
+            "type": "string"
+          },
+          {
+            "name": "start_time_at",
+            "type": "u64"
+          },
+          {
+            "name": "end_time_at",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventStatusType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Open"
+          },
+          {
+            "name": "Closed"
+          },
+          {
+            "name": "Cancelled"
+          },
+          {
+            "name": "Completed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventsManager",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Authority to make changes to the EventsManager"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "mints",
+            "type": {
+              "defined": {
+                "name": "Mints"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventsManagerState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Authority to make changes to the EventsManagerState"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "events_manager",
+            "docs": [
+              "Address of the EventsManager account"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "vault_fee_info",
+            "type": {
+              "defined": {
+                "name": "VaultFeeInfo"
+              }
+            }
+          },
+          {
+            "name": "vault_owner_info",
+            "type": {
+              "defined": {
+                "name": "VaultOwnerInfo"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HostProfile",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "events_manager",
+            "type": "pubkey"
+          },
+          {
+            "name": "identity_profile",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "IdentityProfile",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Pubkey of the user's wallet"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "Name of the user"
+            ],
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Mints",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "atlas",
+            "docs": [
+              "Mint address of Atlas token"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "polis",
+            "docs": [
+              "Mint address of Polis token"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "usdc",
+            "docs": [
+              "Mint address of USDC token"
+            ],
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultFeeInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "dao_vault_fee",
+            "type": "u8"
+          },
+          {
+            "name": "dev_vault_fee",
+            "type": "u8"
+          },
+          {
+            "name": "ops_vault_fee",
+            "type": "u8"
+          },
+          {
+            "name": "host_profile_fee",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultOwnerInfo",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "dao_vault_owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "dev_vault_owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "ops_vault_owner",
+            "type": "pubkey"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": [
+    {
+      "name": "SEED",
+      "type": "string",
+      "value": "\"anchor\""
+    }
+  ]
+}
