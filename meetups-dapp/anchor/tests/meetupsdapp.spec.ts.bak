@@ -1,0 +1,76 @@
+import * as anchor from '@coral-xyz/anchor'
+import {Program} from '@coral-xyz/anchor'
+import {Keypair} from '@solana/web3.js'
+import {Meetupsdapp} from '../target/types/meetupsdapp'
+
+describe('meetupsdapp', () => {
+  // Configure the client to use the local cluster.
+  const provider = anchor.AnchorProvider.env()
+  anchor.setProvider(provider)
+  const payer = provider.wallet as anchor.Wallet
+
+  const program = anchor.workspace.Meetupsdapp as Program<Meetupsdapp>
+
+  const meetupsdappKeypair = Keypair.generate()
+
+  it('Initialize Meetupsdapp', async () => {
+    await program.methods
+      .initialize()
+      .accounts({
+        meetupsdapp: meetupsdappKeypair.publicKey,
+        payer: payer.publicKey,
+      })
+      .signers([meetupsdappKeypair])
+      .rpc()
+
+    const currentCount = await program.account.meetupsdapp.fetch(meetupsdappKeypair.publicKey)
+
+    expect(currentCount.count).toEqual(0)
+  })
+
+  it('Increment Meetupsdapp', async () => {
+    await program.methods.increment().accounts({ meetupsdapp: meetupsdappKeypair.publicKey }).rpc()
+
+    const currentCount = await program.account.meetupsdapp.fetch(meetupsdappKeypair.publicKey)
+
+    expect(currentCount.count).toEqual(1)
+  })
+
+  it('Increment Meetupsdapp Again', async () => {
+    await program.methods.increment().accounts({ meetupsdapp: meetupsdappKeypair.publicKey }).rpc()
+
+    const currentCount = await program.account.meetupsdapp.fetch(meetupsdappKeypair.publicKey)
+
+    expect(currentCount.count).toEqual(2)
+  })
+
+  it('Decrement Meetupsdapp', async () => {
+    await program.methods.decrement().accounts({ meetupsdapp: meetupsdappKeypair.publicKey }).rpc()
+
+    const currentCount = await program.account.meetupsdapp.fetch(meetupsdappKeypair.publicKey)
+
+    expect(currentCount.count).toEqual(1)
+  })
+
+  it('Set meetupsdapp value', async () => {
+    await program.methods.set(42).accounts({ meetupsdapp: meetupsdappKeypair.publicKey }).rpc()
+
+    const currentCount = await program.account.meetupsdapp.fetch(meetupsdappKeypair.publicKey)
+
+    expect(currentCount.count).toEqual(42)
+  })
+
+  it('Set close the meetupsdapp account', async () => {
+    await program.methods
+      .close()
+      .accounts({
+        payer: payer.publicKey,
+        meetupsdapp: meetupsdappKeypair.publicKey,
+      })
+      .rpc()
+
+    // The account should no longer exist, returning null.
+    const userAccount = await program.account.meetupsdapp.fetchNullable(meetupsdappKeypair.publicKey)
+    expect(userAccount).toBeNull()
+  })
+})
