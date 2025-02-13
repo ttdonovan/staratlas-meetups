@@ -466,7 +466,7 @@ export type Meetups = {
           {
             "name": "host",
             "docs": [
-              "Address of the HostProfile account"
+              "HostProfile PDA"
             ],
             "type": "pubkey"
           },
@@ -569,7 +569,7 @@ export type Meetups = {
           {
             "name": "eventsManager",
             "docs": [
-              "Address of the EventsManager account"
+              "EventsManager PDA"
             ],
             "type": "pubkey"
           },

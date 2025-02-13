@@ -21,6 +21,17 @@ const usdcMintAddress = new PublicKey(
   "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 );
 
+const getFutureDate = (days: number) => {
+  const futureDate = new Date();
+  futureDate.setDate(futureDate.getDate() + days);
+
+  const year = futureDate.getFullYear();
+  const month = futureDate.getMonth() + 1;
+  const day = futureDate.getDate();
+
+  return [year, month, day];
+}
+
 describe("meetups", () => {
   let context;
   let provider: BankrunProvider;
@@ -28,6 +39,7 @@ describe("meetups", () => {
   let eventsManagerAddress: PublicKey;
   let eventsManagerStateAddress: PublicKey;
   let identityProfileAddress: PublicKey;
+  let futureDate: number[];
 
   beforeAll(async () => {
     context = await startAnchor(
@@ -53,6 +65,8 @@ describe("meetups", () => {
       [Buffer.from("identity"), provider.wallet.publicKey.toBuffer()],
       meetupsAddress
     );
+
+    futureDate = getFutureDate(3);
   });
 
   it("Initialize Events Manager", async () => {
@@ -115,6 +129,8 @@ describe("meetups", () => {
   });
 
   it("Create an Event", async () => {
+    const [year, month, day] = futureDate;
+
     // Get the host profile PDA
     const [hostProfileAddress] = PublicKey.findProgramAddressSync(
       [
@@ -131,15 +147,15 @@ describe("meetups", () => {
         Buffer.from("event"),
         eventsManagerAddress.toBuffer(),
         hostProfileAddress.toBuffer(),
-        new BN(2025).toArrayLike(Buffer, "le", 2), // Buffer.from([2025 & 0xff, (2025 >> 8) & 0xff]), // year (u16) as le bytes
-        new BN(2).toArrayLike(Buffer, "le", 1), // Buffer.from([2]), // month (u8)
-        new BN(1).toArrayLike(Buffer, "le", 1), // Buffer.from([1]), // day (u8)
+        new BN(year).toArrayLike(Buffer, "le", 2), // Buffer.from([2025 & 0xff, (2025 >> 8) & 0xff]), // year (u16) as le bytes
+        new BN(month).toArrayLike(Buffer, "le", 1), // Buffer.from([2]), // month (u8)
+        new BN(day).toArrayLike(Buffer, "le", 1), // Buffer.from([1]), // day (u8)
       ],
       meetupsAddress
     );
 
     await meetupsProgram.methods
-      .createEvent(eventsManagerAddress, "Star Explorers Night Out", 2025, 2, 1)
+      .createEvent(eventsManagerAddress, "Star Explorers Night Out", year, month, day)
       .rpc();
 
     const event = await meetupsProgram.account.eventEntry.fetch(eventAddress);

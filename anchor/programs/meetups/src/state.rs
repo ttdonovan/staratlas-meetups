@@ -38,7 +38,7 @@ pub struct EventsManager {
 pub struct EventsManagerState {
     /// Authority to make changes to the EventsManagerState
     pub authority: Pubkey,
-    /// Address of the EventsManager account
+    /// EventsManager PDA
     pub events_manager: Pubkey,
     pub vault_fee_info: VaultFeeInfo,
     pub vault_owner_info: VaultOwnerInfo,
@@ -74,7 +74,7 @@ pub enum EventStatusType {
 #[derive(InitSpace)]
 pub struct EventEntry {
     pub status: EventStatusType,
-    /// Address of the HostProfile account
+    /// HostProfile PDA
     pub host: Pubkey,
     /// Name of the event
     #[max_len(32)]

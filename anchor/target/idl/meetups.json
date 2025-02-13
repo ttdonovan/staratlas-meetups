@@ -460,7 +460,7 @@
           {
             "name": "host",
             "docs": [
-              "Address of the HostProfile account"
+              "HostProfile PDA"
             ],
             "type": "pubkey"
           },
@@ -563,7 +563,7 @@
           {
             "name": "events_manager",
             "docs": [
-              "Address of the EventsManager account"
+              "EventsManager PDA"
             ],
             "type": "pubkey"
           },
