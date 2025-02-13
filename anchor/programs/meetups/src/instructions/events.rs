@@ -19,38 +19,31 @@ use crate::{
 #[instruction(event_manager_id: Pubkey, name: String, year: u16, month: u8, day: u8)]
 pub struct CreateEvent<'info> {
     #[account(mut)]
-    signer: Signer<'info>,
+    funder: Signer<'info>,
 
     #[account(
-        mut,
-        seeds = [b"manager", event_manager_id.as_ref()],
+        seeds = [b"identity", funder.key().as_ref()],
         bump,
-    )]
-    pub events_manager: Account<'info, EventsManager>,
-
-    #[account(
-        seeds = [b"identity", signer.key().as_ref()],
-        bump,
-        constraint = identity_profile.owner == signer.key(),
+        constraint = identity_profile.owner == funder.key(), // do we need this?
     )]
     identity_profile: Account<'info, IdentityProfile>,
 
     #[account(
         init_if_needed,
-        payer = signer,
+        payer = funder,
         space = ANCHOR_DISCRIMINATOR_SIZE + HostProfile::INIT_SPACE,
-        seeds = [b"host", events_manager.key().as_ref(), identity_profile.key().as_ref()],
+        seeds = [b"host", event_manager_id.as_ref(), identity_profile.key().as_ref()],
         bump,
     )]
     host_profile: Account<'info, HostProfile>,
 
     #[account(
         init,
-        payer = signer,
+        payer = funder,
         space = ANCHOR_DISCRIMINATOR_SIZE + EventEntry::INIT_SPACE,
         seeds = [
             b"event",
-            events_manager.key().as_ref(),
+            event_manager_id.as_ref(),
             host_profile.key().as_ref(),
             year.to_le_bytes().as_ref(),
             month.to_le_bytes().as_ref(),
@@ -65,6 +58,7 @@ pub struct CreateEvent<'info> {
 
 pub fn handle_create_event(
     ctx: Context<CreateEvent>,
+    _event_manager_id: Pubkey,
     name: String,
     year: u16,
     month: u8,
@@ -81,87 +75,80 @@ pub fn handle_create_event(
     Ok(())
 }
 
-// ---
-// 2. Update an EventEntry
-// ---
+// // ---
+// // 2. Update an EventEntry
+// // ---
 
-#[derive(Accounts)]
-#[instruction(event_manager_id: Pubkey)]
-pub struct UpdateEvent<'info> {
-    #[account(mut)]
-    signer: Signer<'info>,
+// #[derive(Accounts)]
+// #[instruction(event_manager_id: Pubkey)]
+// pub struct UpdateEvent<'info> {
+//     #[account(mut)]
+//     signer: Signer<'info>,
 
-    #[account(
-        mut,
-        seeds = [b"manager", event_manager_id.as_ref()],
-        bump,
-    )]
-    pub events_manager: Account<'info, EventsManager>,
+//     #[account(
+//         seeds = [b"identity", signer.key().as_ref()],
+//         bump,
+//         constraint = identity_profile.owner == signer.key(),
+//     )]
+//     identity_profile: Account<'info, IdentityProfile>,
 
-    #[account(
-        seeds = [b"identity", signer.key().as_ref()],
-        bump,
-        constraint = identity_profile.owner == signer.key(),
-    )]
-    identity_profile: Account<'info, IdentityProfile>,
+//     #[account(
+//         seeds = [b"host", events_manager.key().as_ref(), identity_profile.key().as_ref()],
+//         bump,
+//         constraint = host_profile.key() == event.host,
+//     )]
+//     host_profile: Account<'info, HostProfile>,
 
-    #[account(
-        seeds = [b"host", events_manager.key().as_ref(), identity_profile.key().as_ref()],
-        bump,
-        constraint = host_profile.key() == event.host,
-    )]
-    host_profile: Account<'info, HostProfile>,
+//     #[account(
+//         mut,
+//         seeds = [
+//             b"event",
+//             events_manager.key().as_ref(),
+//             host_profile.key().as_ref(),
+//         ],
+//         bump,
+//         constraint = event.status == EventStatusType::Pending,
+//     )]
+//     event: Account<'info, EventEntry>,
 
-    #[account(
-        mut,
-        seeds = [
-            b"event",
-            events_manager.key().as_ref(),
-            host_profile.key().as_ref(),
-        ],
-        bump,
-        constraint = event.status == EventStatusType::Pending,
-    )]
-    event: Account<'info, EventEntry>,
+//     system_program: Program<'info, System>,
+// }
 
-    system_program: Program<'info, System>,
-}
+// pub fn handle_update_event(
+//     ctx: Context<UpdateEvent>,
+//     name: String,
+//     location: String,
+//     mappable_address: String,
+//     start_time_at: u64,
+//     end_time_at: u64,
+// ) -> Result<()> {
+//     let event = &mut ctx.accounts.event;
+//     require!(
+//         event.status == EventStatusType::Pending,
+//         ErrorCode::EventNotPending
+//     );
 
-pub fn handle_update_event(
-    ctx: Context<UpdateEvent>,
-    name: String,
-    location: String,
-    mappable_address: String,
-    start_time_at: u64,
-    end_time_at: u64,
-) -> Result<()> {
-    let event = &mut ctx.accounts.event;
-    require!(
-        event.status == EventStatusType::Pending,
-        ErrorCode::EventNotPending
-    );
+//     event.name = name;
+//     event.location = location;
+//     event.mappable_address = mappable_address;
+//     event.start_time_at = start_time_at;
+//     event.end_time_at = end_time_at;
 
-    event.name = name;
-    event.location = location;
-    event.mappable_address = mappable_address;
-    event.start_time_at = start_time_at;
-    event.end_time_at = end_time_at;
+//     Ok(())
+// }
 
-    Ok(())
-}
+// // ---
+// // 3. Open (for registration) an EventEntry
+// // ---
 
-// ---
-// 3. Open (for registration) an EventEntry
-// ---
+// pub fn handle_open_event(ctx: Context<UpdateEvent>) -> Result<()> {
+//     let event = &mut ctx.accounts.event;
+//     require!(
+//         event.status == EventStatusType::Pending,
+//         ErrorCode::EventNotPending
+//     );
 
-pub fn handle_open_event(ctx: Context<UpdateEvent>) -> Result<()> {
-    let event = &mut ctx.accounts.event;
-    require!(
-        event.status == EventStatusType::Pending,
-        ErrorCode::EventNotPending
-    );
+//     event.status = EventStatusType::Open;
 
-    event.status = EventStatusType::Open;
-
-    Ok(())
-}
+//     Ok(())
+// }

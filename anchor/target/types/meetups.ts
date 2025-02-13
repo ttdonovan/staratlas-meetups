@@ -27,33 +27,9 @@ export type Meetups = {
       ],
       "accounts": [
         {
-          "name": "signer",
+          "name": "funder",
           "writable": true,
           "signer": true
-        },
-        {
-          "name": "eventsManager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  110,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "eventManagerId"
-              }
-            ]
-          }
         },
         {
           "name": "identityProfile",
@@ -74,7 +50,7 @@ export type Meetups = {
               },
               {
                 "kind": "account",
-                "path": "signer"
+                "path": "funder"
               }
             ]
           }
@@ -94,8 +70,8 @@ export type Meetups = {
                 ]
               },
               {
-                "kind": "account",
-                "path": "eventsManager"
+                "kind": "arg",
+                "path": "eventManagerId"
               },
               {
                 "kind": "account",
@@ -120,8 +96,8 @@ export type Meetups = {
                 ]
               },
               {
-                "kind": "account",
-                "path": "eventsManager"
+                "kind": "arg",
+                "path": "eventManagerId"
               },
               {
                 "kind": "account",
@@ -148,6 +124,10 @@ export type Meetups = {
         }
       ],
       "args": [
+        {
+          "name": "eventManagerId",
+          "type": "pubkey"
+        },
         {
           "name": "name",
           "type": "string"
@@ -264,7 +244,7 @@ export type Meetups = {
       ],
       "accounts": [
         {
-          "name": "signer",
+          "name": "funder",
           "writable": true,
           "signer": true
         },
@@ -288,7 +268,7 @@ export type Meetups = {
               },
               {
                 "kind": "account",
-                "path": "signer"
+                "path": "funder"
               }
             ]
           }

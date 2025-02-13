@@ -21,33 +21,9 @@
       ],
       "accounts": [
         {
-          "name": "signer",
+          "name": "funder",
           "writable": true,
           "signer": true
-        },
-        {
-          "name": "events_manager",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  109,
-                  97,
-                  110,
-                  97,
-                  103,
-                  101,
-                  114
-                ]
-              },
-              {
-                "kind": "arg",
-                "path": "event_manager_id"
-              }
-            ]
-          }
         },
         {
           "name": "identity_profile",
@@ -68,7 +44,7 @@
               },
               {
                 "kind": "account",
-                "path": "signer"
+                "path": "funder"
               }
             ]
           }
@@ -88,8 +64,8 @@
                 ]
               },
               {
-                "kind": "account",
-                "path": "events_manager"
+                "kind": "arg",
+                "path": "event_manager_id"
               },
               {
                 "kind": "account",
@@ -114,8 +90,8 @@
                 ]
               },
               {
-                "kind": "account",
-                "path": "events_manager"
+                "kind": "arg",
+                "path": "event_manager_id"
               },
               {
                 "kind": "account",
@@ -142,6 +118,10 @@
         }
       ],
       "args": [
+        {
+          "name": "event_manager_id",
+          "type": "pubkey"
+        },
         {
           "name": "name",
           "type": "string"
@@ -258,7 +238,7 @@
       ],
       "accounts": [
         {
-          "name": "signer",
+          "name": "funder",
           "writable": true,
           "signer": true
         },
@@ -282,7 +262,7 @@
               },
               {
                 "kind": "account",
-                "path": "signer"
+                "path": "funder"
               }
             ]
           }

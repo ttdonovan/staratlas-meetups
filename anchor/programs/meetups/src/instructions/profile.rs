@@ -5,12 +5,12 @@ use crate::{IdentityProfile, ANCHOR_DISCRIMINATOR_SIZE};
 #[derive(Accounts)]
 pub struct InitIdentityProfile<'info> {
     #[account(mut)]
-    signer: Signer<'info>,
+    funder: Signer<'info>,
     #[account(
         init,
-        payer = signer,
+        payer = funder,
         space = ANCHOR_DISCRIMINATOR_SIZE + IdentityProfile::INIT_SPACE,
-        seeds = [b"identity", signer.key().as_ref()],
+        seeds = [b"identity", funder.key().as_ref()],
         bump,
     )]
     identity_profile: Account<'info, IdentityProfile>,
@@ -19,6 +19,7 @@ pub struct InitIdentityProfile<'info> {
 
 pub fn handle_init_identity_profile(ctx: Context<InitIdentityProfile>, name: String) -> Result<()> {
     let identity_profile = &mut ctx.accounts.identity_profile;
+    identity_profile.owner = *ctx.accounts.funder.key;
     identity_profile.name = name;
 
     Ok(())

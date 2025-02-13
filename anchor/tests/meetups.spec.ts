@@ -1,4 +1,4 @@
-import { Program } from "@coral-xyz/anchor";
+import { Program, BN } from "@coral-xyz/anchor";
 import { PublicKey } from "@solana/web3.js";
 
 import { BankrunProvider, startAnchor } from "anchor-bankrun";
@@ -22,18 +22,141 @@ const usdcMintAddress = new PublicKey(
 );
 
 describe("meetups", () => {
-  it("Initialize Event Manager", async () => {
-    const context = await startAnchor(
+  let context;
+  let provider: BankrunProvider;
+  let meetupsProgram: Program<Meetups>;
+  let eventsManagerAddress: PublicKey;
+  let eventsManagerStateAddress: PublicKey;
+  let identityProfileAddress: PublicKey;
+
+  beforeAll(async () => {
+    context = await startAnchor(
       "",
       [{ name: "meetups", programId: meetupsAddress }],
       []
     );
-    const provider = new BankrunProvider(context);
 
-    const meetupsProgram = new Program<Meetups>(IDL, provider);
+    provider = new BankrunProvider(context);
+    meetupsProgram = new Program<Meetups>(IDL, provider);
 
+    [eventsManagerAddress] = PublicKey.findProgramAddressSync(
+      [Buffer.from("manager"), provider.wallet.publicKey.toBuffer()],
+      meetupsAddress
+    );
+
+    [eventsManagerStateAddress] = PublicKey.findProgramAddressSync(
+      [Buffer.from("state"), provider.wallet.publicKey.toBuffer()],
+      meetupsAddress
+    );
+
+    [identityProfileAddress] = PublicKey.findProgramAddressSync(
+      [Buffer.from("identity"), provider.wallet.publicKey.toBuffer()],
+      meetupsAddress
+    );
+  });
+
+  it("Initialize Events Manager", async () => {
     await meetupsProgram.methods
       .initEventManager(atlasMintAddress, polisMintAddress, usdcMintAddress)
       .rpc();
+
+    const eventsManager = await meetupsProgram.account.eventsManager.fetch(
+      eventsManagerAddress
+    );
+    // console.log(eventsManager);
+
+    expect(eventsManager.mints.atlas).toEqual(atlasMintAddress);
+    expect(eventsManager.mints.polis).toEqual(polisMintAddress);
+    expect(eventsManager.mints.usdc).toEqual(usdcMintAddress);
+
+    const eventsManagerState =
+      await meetupsProgram.account.eventsManagerState.fetch(
+        eventsManagerStateAddress
+      );
+    // console.log(eventsManagerState);
+
+    expect(eventsManagerState.authority).toEqual(provider.wallet.publicKey);
+    expect(eventsManagerState.eventsManager).toEqual(eventsManagerAddress);
+
+    expect(eventsManagerState.vaultFeeInfo.daoVaultFee).toEqual(0);
+    expect(eventsManagerState.vaultFeeInfo.devVaultFee).toEqual(0);
+    expect(eventsManagerState.vaultFeeInfo.opsVaultFee).toEqual(0);
+    expect(eventsManagerState.vaultFeeInfo.hostProfileFee).toEqual(0);
+
+    expect(eventsManagerState.vaultOwnerInfo.daoVaultOwner).toEqual(
+      provider.wallet.publicKey
+    );
+    expect(eventsManagerState.vaultOwnerInfo.devVaultOwner).toEqual(
+      provider.wallet.publicKey
+    );
+    expect(eventsManagerState.vaultOwnerInfo.opsVaultOwner).toEqual(
+      provider.wallet.publicKey
+    );
   });
+
+  // it("Updates Events Manager Vault Fee Info", async () => {
+  //   // todo!
+  // });
+
+  // it("Updates Events Manager Vault Owner Info", async () => {
+  //   // todo!
+  // });
+
+  it("Initialize Identity Profile", async () => {
+    await meetupsProgram.methods.initIdentityProfile("Space Cadet").rpc();
+
+    const identityProfile = await meetupsProgram.account.identityProfile.fetch(
+      identityProfileAddress
+    );
+    console.log(identityProfile);
+
+    expect(identityProfile.owner).toEqual(provider.wallet.publicKey);
+    expect(identityProfile.name).toEqual("Space Cadet");
+  });
+
+  it("Create an Event", async () => {
+    // Get the host profile PDA
+    const [hostProfileAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("host"),
+        eventsManagerAddress.toBuffer(),
+        identityProfileAddress.toBuffer(),
+      ],
+      meetupsAddress
+    );
+
+    // Get the event PDA
+    const [eventAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("event"),
+        eventsManagerAddress.toBuffer(),
+        hostProfileAddress.toBuffer(),
+        new BN(2025).toArrayLike(Buffer, "le", 2), // Buffer.from([2025 & 0xff, (2025 >> 8) & 0xff]), // year (u16) as le bytes
+        new BN(2).toArrayLike(Buffer, "le", 1), // Buffer.from([2]), // month (u8)
+        new BN(1).toArrayLike(Buffer, "le", 1), // Buffer.from([1]), // day (u8)
+      ],
+      meetupsAddress
+    );
+
+    await meetupsProgram.methods
+      .createEvent(eventsManagerAddress, "Star Explorers Night Out", 2025, 2, 1)
+      .rpc();
+
+    const event = await meetupsProgram.account.eventEntry.fetch(eventAddress);
+    // console.log(event);
+
+    expect(event.name).toEqual("Star Explorers Night Out");
+    expect(event.location).toEqual("");
+    expect(event.mappableAddress).toEqual("");
+    expect(event.startTimeAt.toString()).toEqual("0");
+    expect(event.endTimeAt.toString()).toEqual("0");
+  });
+
+  // it("Update an Event", async () => {
+  //   // todo!
+  // });
+
+  // it("Open an Event", async () => {
+  //   // todo!
+  // });
 });

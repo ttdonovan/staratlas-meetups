@@ -62,11 +62,12 @@ pub mod meetups {
 
     pub fn create_event(
         ctx: Context<CreateEvent>,
+        event_manager_id: Pubkey,
         name: String,
         year: u16,
         month: u8,
         day: u8,
     ) -> Result<()> {
-        events::handle_create_event(ctx, name, year, month, day)
+        events::handle_create_event(ctx, event_manager_id, name, year, month, day)
     }
 }
