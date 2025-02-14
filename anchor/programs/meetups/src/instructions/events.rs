@@ -194,6 +194,14 @@ pub fn handle_open_event(
     );
 
     event.status = EventStatusType::Open;
+    msg!(
+        "EventEntry({}) - {} ({}/{}/{}) is now open for registration.",
+        event.key(),
+        event.name,
+        event.year,
+        event.month,
+        event.day
+    );
 
     Ok(())
 }
@@ -212,6 +220,14 @@ pub fn handle_close_event(
     );
 
     event.status = EventStatusType::Closed;
+    msg!(
+        "EventEntry({}) - {} ({}/{}/{}) is now closed for registration.",
+        event.key(),
+        event.name,
+        event.year,
+        event.month,
+        event.day
+    );
 
     Ok(())
 }

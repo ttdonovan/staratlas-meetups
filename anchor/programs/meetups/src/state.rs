@@ -31,6 +31,7 @@ pub struct EventsManager {
     /// Authority to make changes to the EventsManager
     pub authority: Pubkey,
     pub mints: Mints,
+    // pub bump: u8,
 }
 
 #[account]
@@ -42,6 +43,7 @@ pub struct EventsManagerState {
     pub events_manager: Pubkey,
     pub vault_fee_info: VaultFeeInfo,
     pub vault_owner_info: VaultOwnerInfo,
+    // pub bump: u8,
 }
 
 #[account]
@@ -59,6 +61,13 @@ pub struct IdentityProfile {
 pub struct HostProfile {
     pub events_manager: Pubkey,
     pub identity_profile: Pubkey,
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct AttendeeProfile {
+    // pub event_entry: Pubkey,
+    pub bump: u8,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, InitSpace)]
@@ -93,4 +102,6 @@ pub struct EventEntry {
     pub mappable_address: String,
     pub start_time_at: u64,
     pub end_time_at: u64,
+    pub entry_token_mint: Pubkey,
+    pub entry_token_amount: u64,
 }

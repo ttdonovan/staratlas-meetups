@@ -116,4 +116,14 @@ pub mod meetups {
     ) -> Result<()> {
         events::handle_close_event(ctx, event_manager_id, year, month, day)
     }
+
+    pub fn event_registration(
+        ctx: Context<RegisterEvent>,
+        entry_amount: u64,
+    ) -> Result<()> {
+        registration::handle_event_registration(
+            ctx,
+            entry_amount,
+        )
+    }
 }
