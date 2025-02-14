@@ -1,11 +1,19 @@
 import { Program, BN } from "@coral-xyz/anchor";
-import { PublicKey } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 import { BankrunProvider, startAnchor } from "anchor-bankrun";
+// import {
+//   createAccountsMintsAndTokenAccounts,
+//   makeKeypairs,
+// } from "@solana-developers/helpers";
 
 // cp target/deploy/meetups.so tests/fixtures/.
 import type { Meetups } from "../target/types/meetups";
+// import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+
 const IDL = require("../target/idl/meetups.json");
+// const TOKEN_PROGRAM: typeof TOKEN_2022_PROGRAM_ID | typeof TOKEN_PROGRAM_ID =
+//   TOKEN_2022_PROGRAM_ID;
 
 const meetupsAddress = new PublicKey(
   "C14GzDxp9S1UfZk1BR1BPwHK1erFoPWkvjjFRtyf4B7L"
@@ -36,10 +44,22 @@ describe("meetups", () => {
   let context;
   let provider: BankrunProvider;
   let meetupsProgram: Program<Meetups>;
+  // let accounts: Record<string, PublicKey> = {
+  //   tokenProgram: TOKEN_PROGRAM,
+  // };
+
   let eventsManagerAddress: PublicKey;
   let eventsManagerStateAddress: PublicKey;
   let identityProfileAddress: PublicKey;
   let futureDate: number[];
+
+  // let alice: Keypair;
+  // let bob: Keypair;
+  // let tokenMintAtlas: Keypair;
+  // let tokenMintPolis: Keypair;
+  // let tokenMintUsdc: Keypair;
+
+  // [alice, bob, tokenMintAtlas, tokenMintPolis, tokenMintUsdc] = makeKeypairs(5);
 
   beforeAll(async () => {
     context = await startAnchor(
@@ -67,6 +87,52 @@ describe("meetups", () => {
     );
 
     futureDate = getFutureDate(3);
+
+    // const userMintsAndTokenAccounts = await createAccountsMintsAndTokenAccounts(
+    //   [
+    //     // Alice's token balance
+    //     [0, 0, 0],
+    //     // Bob's token balance
+    //     [0, 0, 0],
+    //   ],
+    //   1 * LAMPORTS_PER_SOL,
+    //   provider.connection,
+    //   provider.wallet.payer
+    // );
+
+    // const users = userMintsAndTokenAccounts.users;
+    // alice = users[0];
+    // bob = users[1];
+
+    // const mints = userMintsAndTokenAccounts.mints;
+    // tokenMintAtlas = mints[0];
+    // tokenMintPolis = mints[1];
+    // tokenMintUsdc = mints[2];
+
+    // const tokenAccounts = userMintsAndTokenAccounts.tokenAccounts;
+    // const aliceTokenAccountAtlas = tokenAccounts[0][0];
+    // const aliceTokenAccountPolis = tokenAccounts[0][1];
+    // const aliceTokenAccountUsdc = tokenAccounts[0][2];
+    // const bobTokenAccountAtlas = tokenAccounts[1][0];
+    // const bobTokenAccountPolis = tokenAccounts[1][1];
+    // const bobTokenAccountUsdc = tokenAccounts[1][2];
+
+    // accounts = {
+    //   ...accounts,
+    //   alice: alice.publicKey,
+    //   bob: bob.publicKey,
+    //   tokenMintAtlas: tokenMintAtlas.publicKey,
+    //   tokenMintPolis: tokenMintPolis.publicKey,
+    //   tokenMintUsdc: tokenMintUsdc.publicKey,
+    //   aliceTokenAccountAtlas,
+    //   aliceTokenAccountPolis,
+    //   aliceTokenAccountUsdc,
+    //   bobTokenAccountAtlas,
+    //   bobTokenAccountPolis,
+    //   bobTokenAccountUsdc,
+    // };
+
+    // console.log(accounts);
   });
 
   it("Initialize Events Manager", async () => {
@@ -173,6 +239,11 @@ describe("meetups", () => {
     expect(event.startTimeAt.toString()).toEqual("0");
     expect(event.endTimeAt.toString()).toEqual("0");
     expect(event.status).toEqual({ pending: {} });
+
+    expect(event.entryTokenMint.toBase58()).toEqual(
+      "11111111111111111111111111111111"
+    );
+    expect(event.entryTokenAmount.toString()).toEqual("0");
   });
 
   it("Update an Event", async () => {
@@ -211,7 +282,9 @@ describe("meetups", () => {
         "21st Amendment Brewery",
         "563 2nd St, San Francisco, CA 94107",
         new BN(1),
-        new BN(2)
+        new BN(2),
+        usdcMintAddress, // entry token mint
+        new BN(25_000_000) // $25 USDC (25 * 10^6)
       )
       .rpc();
 
@@ -225,6 +298,10 @@ describe("meetups", () => {
     );
     expect(event.startTimeAt.toString()).toEqual("1");
     expect(event.endTimeAt.toString()).toEqual("2");
+
+    expect(event.entryTokenMint).toEqual(usdcMintAddress);
+    expect(event.entryTokenAmount.toString()).toEqual("25000000");
+
     expect(event.status).toEqual({ pending: {} });
   });
 
@@ -270,6 +347,58 @@ describe("meetups", () => {
     // console.log(event);
     expect(event.status).toEqual({ closed: {} });
 
-    // todo!: re-open event
+    await meetupsProgram.methods
+      .openEvent(eventsManagerAddress, year, month, day)
+      .rpc();
+
+    event = await meetupsProgram.account.eventEntry.fetch(eventAddress);
+    // console.log(event);
+    expect(event.status).toEqual({ open: {} });
+  });
+
+  it("Attendee Event Registration", async () => {
+    const [year, month, day] = futureDate;
+
+    // Get the host profile PDA
+    const [hostProfileAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("host"),
+        eventsManagerAddress.toBuffer(),
+        identityProfileAddress.toBuffer(),
+      ],
+      meetupsAddress
+    );
+
+    // Get the event PDA
+    const [eventAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("event"),
+        eventsManagerAddress.toBuffer(),
+        hostProfileAddress.toBuffer(),
+        new BN(year).toArrayLike(Buffer, "le", 2), // Buffer.from([2025 & 0xff, (2025 >> 8) & 0xff]), // year (u16) as le bytes
+        new BN(month).toArrayLike(Buffer, "le", 1), // Buffer.from([2]), // month (u8)
+        new BN(day).toArrayLike(Buffer, "le", 1), // Buffer.from([1]), // day (u8)
+      ],
+      meetupsAddress
+    );
+
+    // Get the attendee PDA
+    const [attendeeAddress] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from("attendee"),
+        eventAddress.toBuffer(),
+        provider.wallet.publicKey.toBuffer(),
+      ],
+      meetupsAddress
+    );
+
+    // await meetupsProgram.methods
+    //   .eventRegistration(new BN(25_000_000))
+    //   .accounts({
+    //     event: eventAddress,
+    //     // attendee: attendeeAddress,
+    //     attendeeTokenMint: usdcMintAddress,
+    //   })
+    //   .rpc();
   });
 });

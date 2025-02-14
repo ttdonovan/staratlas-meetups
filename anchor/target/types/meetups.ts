@@ -857,6 +857,14 @@ export type Meetups = {
         {
           "name": "endTimeAt",
           "type": "u64"
+        },
+        {
+          "name": "entryTokenMint",
+          "type": "pubkey"
+        },
+        {
+          "name": "entryTokenAmount",
+          "type": "u64"
         }
       ]
     },

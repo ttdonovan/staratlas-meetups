@@ -851,6 +851,14 @@
         {
           "name": "end_time_at",
           "type": "u64"
+        },
+        {
+          "name": "entry_token_mint",
+          "type": "pubkey"
+        },
+        {
+          "name": "entry_token_amount",
+          "type": "u64"
         }
       ]
     },

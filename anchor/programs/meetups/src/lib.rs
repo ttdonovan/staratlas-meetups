@@ -82,6 +82,8 @@ pub mod meetups {
         mappable_address: String,
         start_time_at: u64,
         end_time_at: u64,
+        entry_token_mint: Pubkey,
+        entry_token_amount: u64,
     ) -> Result<()> {
         events::handle_update_event(
             ctx,
@@ -94,6 +96,8 @@ pub mod meetups {
             mappable_address,
             start_time_at,
             end_time_at,
+            entry_token_mint,
+            entry_token_amount,
         )
     }
 
@@ -117,13 +121,7 @@ pub mod meetups {
         events::handle_close_event(ctx, event_manager_id, year, month, day)
     }
 
-    pub fn event_registration(
-        ctx: Context<RegisterEvent>,
-        entry_amount: u64,
-    ) -> Result<()> {
-        registration::handle_event_registration(
-            ctx,
-            entry_amount,
-        )
+    pub fn event_registration(ctx: Context<RegisterEvent>, entry_amount: u64) -> Result<()> {
+        registration::handle_event_registration(ctx, entry_amount)
     }
 }

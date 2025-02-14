@@ -48,11 +48,8 @@ pub struct RegisterEvent<'info> {
     pub associated_token_program: Program<'info, AssociatedToken>,
 }
 
-pub fn handle_event_registration(
-    ctx: Context<RegisterEvent>,
-    entry_amount: u64,
-) -> Result<()> {
-    // FIXME: add checks for the amount...
+pub fn handle_event_registration(ctx: Context<RegisterEvent>, entry_amount: u64) -> Result<()> {
+    // FIXME: add checks for the required amount...
     shared::transfer_tokens(
         &ctx.accounts.attendee_token_account,
         &ctx.accounts.vault,

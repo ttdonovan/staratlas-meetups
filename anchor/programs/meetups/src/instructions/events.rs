@@ -125,6 +125,8 @@ pub fn handle_update_event(
     mappable_address: String,
     start_time_at: u64,
     end_time_at: u64,
+    entry_token_mint: Pubkey,
+    entry_token_amount: u64,
 ) -> Result<()> {
     let event = &mut ctx.accounts.event;
     require!(
@@ -137,6 +139,10 @@ pub fn handle_update_event(
     event.mappable_address = mappable_address;
     event.start_time_at = start_time_at;
     event.end_time_at = end_time_at;
+
+    // FIXME: how to enforce only 'authorized' token mints...?
+    event.entry_token_mint = entry_token_mint;
+    event.entry_token_amount = entry_token_amount;
 
     Ok(())
 }
@@ -175,7 +181,7 @@ pub struct UpdateEventStatus<'info> {
             day.to_le_bytes().as_ref(),
         ],
         bump,
-        constraint = event.status == EventStatusType::Pending || event.status == EventStatusType::Open,
+        constraint = event.status == EventStatusType::Pending || event.status == EventStatusType::Open || event.status == EventStatusType::Closed,
     )]
     event: Account<'info, EventEntry>,
 }
@@ -188,10 +194,11 @@ pub fn handle_open_event(
     _day: u8,
 ) -> Result<()> {
     let event = &mut ctx.accounts.event;
-    require!(
-        event.status == EventStatusType::Pending,
-        ErrorCode::EventNotPending
-    );
+    // FIXME: maybe redundant...? if constraints in UpdateEventStatus are correct...
+    // require!(
+    //     event.status == EventStatusType::Pending,
+    //     ErrorCode::EventNotPending
+    // );
 
     event.status = EventStatusType::Open;
     msg!(
