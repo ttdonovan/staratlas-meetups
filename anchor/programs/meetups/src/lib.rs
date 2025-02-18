@@ -21,7 +21,10 @@ pub mod meetups {
         polis_mint: Pubkey,
         usdc_mint: Pubkey,
     ) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id,);
+        msg!(
+            "Event Manager initialized by: {:?}",
+            &ctx.accounts.authority.key(),
+        );
 
         admin::handle_init_events_manager(ctx, atlas_mint, polis_mint, usdc_mint)
     }
@@ -121,7 +124,7 @@ pub mod meetups {
         events::handle_close_event(ctx, event_manager_id, year, month, day)
     }
 
-    pub fn event_registration(ctx: Context<RegisterEvent>, entry_amount: u64) -> Result<()> {
-        registration::handle_event_registration(ctx, entry_amount)
-    }
+    // pub fn event_registration(ctx: Context<RegisterEvent>, entry_amount: u64) -> Result<()> {
+    //     registration::handle_event_registration(ctx, entry_amount)
+    // }
 }

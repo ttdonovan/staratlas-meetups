@@ -16,4 +16,4 @@ cluster = "Localnet"
 wallet = '~\.config/solana/id.json'
 
 [scripts]
-test = "bun jest --preset ts-jest --rootDir tests"
+test = "bun jest --preset ts-jest --rootDir specs"

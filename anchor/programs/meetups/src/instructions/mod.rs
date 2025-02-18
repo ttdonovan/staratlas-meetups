@@ -7,5 +7,5 @@ pub mod shared;
 pub use admin::*;
 pub use events::*;
 pub use profile::*;
-pub use registration::*;
-pub use shared::*;
+// pub use registration::*;
+// pub use shared::*;

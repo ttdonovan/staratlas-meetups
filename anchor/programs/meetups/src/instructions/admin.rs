@@ -8,7 +8,7 @@ use crate::{
 #[derive(Accounts)]
 pub struct InitEventsManager<'info> {
     #[account(mut)]
-    authority: Signer<'info>,
+    pub authority: Signer<'info>,
     #[account(
         init,
         payer = authority,
@@ -16,7 +16,7 @@ pub struct InitEventsManager<'info> {
         seeds = [b"manager", authority.key().as_ref()],
         bump,
     )]
-    pub(crate) event_manager: Account<'info, EventsManager>,
+    pub event_manager: Account<'info, EventsManager>,
     #[account(
         init,
         payer = authority,
