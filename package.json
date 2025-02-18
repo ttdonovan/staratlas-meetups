@@ -7,7 +7,7 @@
     "anchor-build": "cd anchor && anchor build && cp target/deploy/meetups.so specs/fixtures/.",
     "anchor-format": "cd anchor && cargo fmt",
     "anchor-specs": "cd anchor && anchor test --skip-deploy --skip-local-validator",
-    "anchor-test": "cd anchor && anchor build && cargo test"
+    "anchor-tests": "cd anchor && anchor build && cargo test"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.1",

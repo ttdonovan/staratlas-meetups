@@ -112,6 +112,8 @@ pub struct UpdateEvent<'info> {
         constraint = event.status == EventStatusType::Pending,
     )]
     event: Account<'info, EventEntry>,
+
+    system_program: Program<'info, System>,
 }
 
 pub fn handle_update_event(

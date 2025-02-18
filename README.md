@@ -21,6 +21,8 @@ $ bun --version
 1.2.2
 ```
 
+### Anchor Bankrun (Specs)
+
 Run a local Solana Test Validator (localhost).
 
 ```bash
@@ -35,5 +37,13 @@ Build and run the Anchor program.
 ```bash
 $ bun install
 $ bun run anchor-build
-$ bun run anchor-test
+$ bun run anchor-specs
+```
+
+### Cargo LiteSVM (Tests)
+
+```
+$ bun run anchor-tests
+# or
+# $ cd anchor && anchor build && cargo test
 ```
