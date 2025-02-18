@@ -73,7 +73,7 @@ pub fn handle_init_events_manager(
                 dev_vault_owner: *ctx.accounts.authority.key,
                 ops_vault_owner: *ctx.accounts.authority.key,
             },
-            // bump: 0,
+            bump: 0,
         });
 
     Ok(())

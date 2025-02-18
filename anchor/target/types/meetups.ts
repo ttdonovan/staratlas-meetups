@@ -918,6 +918,10 @@ export type Meetups = {
           {
             "name": "entryTokenAmount",
             "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -964,6 +968,10 @@ export type Meetups = {
                 "name": "mints"
               }
             }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -1002,6 +1010,10 @@ export type Meetups = {
                 "name": "vaultOwnerInfo"
               }
             }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -1018,6 +1030,10 @@ export type Meetups = {
           {
             "name": "identityProfile",
             "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -1040,6 +1056,10 @@ export type Meetups = {
               "Name of the user"
             ],
             "type": "string"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }

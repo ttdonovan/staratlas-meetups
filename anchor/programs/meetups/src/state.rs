@@ -31,7 +31,7 @@ pub struct EventsManager {
     /// Authority to make changes to the EventsManager
     pub authority: Pubkey,
     pub mints: Mints,
-    // pub bump: u8,
+    pub bump: u8,
 }
 
 #[account]
@@ -43,7 +43,7 @@ pub struct EventsManagerState {
     pub events_manager: Pubkey,
     pub vault_fee_info: VaultFeeInfo,
     pub vault_owner_info: VaultOwnerInfo,
-    // pub bump: u8,
+    pub bump: u8,
 }
 
 #[account]
@@ -54,6 +54,7 @@ pub struct IdentityProfile {
     /// Name of the user
     #[max_len(32)]
     pub name: String,
+    pub bump: u8,
 }
 
 #[account]
@@ -61,6 +62,7 @@ pub struct IdentityProfile {
 pub struct HostProfile {
     pub events_manager: Pubkey,
     pub identity_profile: Pubkey,
+    pub bump: u8,
 }
 
 #[account]
@@ -104,4 +106,5 @@ pub struct EventEntry {
     pub end_time_at: u64,
     pub entry_token_mint: Pubkey,
     pub entry_token_amount: u64,
+    pub bump: u8,
 }

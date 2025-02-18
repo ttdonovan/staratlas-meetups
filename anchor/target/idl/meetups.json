@@ -912,6 +912,10 @@
           {
             "name": "entry_token_amount",
             "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -958,6 +962,10 @@
                 "name": "Mints"
               }
             }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -996,6 +1004,10 @@
                 "name": "VaultOwnerInfo"
               }
             }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -1012,6 +1024,10 @@
           {
             "name": "identity_profile",
             "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }
@@ -1034,6 +1050,10 @@
               "Name of the user"
             ],
             "type": "string"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }

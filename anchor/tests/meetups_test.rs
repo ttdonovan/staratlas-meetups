@@ -172,42 +172,42 @@ pub fn meetups_program_test() {
     let event_data = EventEntry::try_deserialize(&mut &event_account.data[..]).unwrap();
     assert_eq!(event_data.name, "PENDING: Star Atlas Community Meetup");
 
-    // // update an event
-    // let instruction = Instruction {
-    //     program_id,
-    //     accounts: vec![
-    //         AccountMeta::new(payer_pk, true), // signer (writeable, signer)
-    //         AccountMeta::new(identity_profile, false), // identity_profile PDA (writable)
-    //         AccountMeta::new(host_profile, false), // host_profile PDA (writable)
-    //         AccountMeta::new(event, true),    // event PDA (writable)
-    //         AccountMeta::new_readonly(system_program::ID, false), // system program
-    //     ],
-    //     data: UpdateEvent {
-    //         event_manager_id: AnchorPubkey::new_from_array(event_manager.to_bytes()),
-    //         year,
-    //         month,
-    //         day,
-    //         name: "Star Atlas Community Meetup".to_string(),
-    //         location: "21st Amendment Brewery".to_string(),
-    //         mappable_address: "563 2nd St, San Francisco, CA 94107".to_string(),
-    //         start_time_at: 1708531200, // Feb 21, 2024 12:00:00 UTC
-    //         end_time_at: 1708538400,   // Feb 21, 2024 14:00:00 UTC
-    //         entry_token_mint: usdc_mint,
-    //         entry_token_amount: 25_000_000, // $25 Dollars (USDC)
-    //     }
-    //     .data(),
-    // };
+    // update an event
+    let instruction = Instruction {
+        program_id,
+        accounts: vec![
+            AccountMeta::new(payer_pk, true), // signer (writeable, signer)
+            AccountMeta::new(identity_profile, false), // identity_profile PDA (writable)
+            AccountMeta::new(host_profile, false), // host_profile PDA (writable)
+            AccountMeta::new(event, true),    // event PDA (writable)
+            AccountMeta::new_readonly(system_program::ID, false), // system program
+        ],
+        data: UpdateEvent {
+            event_manager_id: AnchorPubkey::new_from_array(event_manager.to_bytes()),
+            year,
+            month,
+            day,
+            name: "Star Atlas Community Meetup".to_string(),
+            location: "21st Amendment Brewery".to_string(),
+            mappable_address: "563 2nd St, San Francisco, CA 94107".to_string(),
+            start_time_at: 1708531200, // Feb 21, 2024 12:00:00 UTC
+            end_time_at: 1708538400,   // Feb 21, 2024 14:00:00 UTC
+            entry_token_mint: usdc_mint,
+            entry_token_amount: 25_000_000, // $25 Dollars (USDC)
+        }
+        .data(),
+    };
 
-    // let message = Message::new(&[instruction], Some(&payer_pk));
-    // let tx = Transaction::new(&[&payer_kp], message, svm.latest_blockhash());
-    // let tx_result = svm.send_transaction(tx);
+    let message = Message::new(&[instruction], Some(&payer_pk));
+    let tx = Transaction::new(&[&payer_kp], message, svm.latest_blockhash());
+    let tx_result = svm.send_transaction(tx);
 
-    // assert!(tx_result.is_ok());
-    // let result = tx_result.unwrap();
+    assert!(tx_result.is_ok());
+    let result = tx_result.unwrap();
 
-    // assert!(result
-    //     .logs
-    //     .contains(&format!("Program log: Instruction: UpdateEvent")));
+    assert!(result
+        .logs
+        .contains(&format!("Program log: Instruction: UpdateEvent")));
 
     // todo!();
 }
