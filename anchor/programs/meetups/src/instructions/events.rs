@@ -82,6 +82,7 @@ pub fn handle_create_event(
 #[derive(Accounts)]
 #[instruction(event_manager_id: Pubkey, year: u16, month: u8, day: u8)]
 pub struct UpdateEvent<'info> {
+    #[account(mut)]
     signer: Signer<'info>,
 
     #[account(

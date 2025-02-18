@@ -179,7 +179,7 @@ pub fn meetups_program_test() {
             AccountMeta::new(payer_pk, true), // signer (writeable, signer)
             AccountMeta::new(identity_profile, false), // identity_profile PDA (writable)
             AccountMeta::new(host_profile, false), // host_profile PDA (writable)
-            AccountMeta::new(event, true),    // event PDA (writable)
+            AccountMeta::new(event, false),   // event PDA (writable)
             AccountMeta::new_readonly(system_program::ID, false), // system program
         ],
         data: UpdateEvent {

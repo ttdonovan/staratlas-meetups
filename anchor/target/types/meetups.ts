@@ -546,6 +546,7 @@ export type Meetups = {
       "accounts": [
         {
           "name": "signer",
+          "writable": true,
           "signer": true
         },
         {
