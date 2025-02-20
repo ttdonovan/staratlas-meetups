@@ -72,7 +72,7 @@ pub struct AttendeeProfile {
     pub bump: u8,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, InitSpace)]
+#[derive(Debug, AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, InitSpace)]
 pub enum EventStatusType {
     /// Event when 'pending' can be updated with additional information
     Pending,

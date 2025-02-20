@@ -3,21 +3,21 @@ use litesvm::LiteSVM;
 use solana_sdk::{
     feature_set::{disable_new_loader_v3_deployments, FeatureSet},
     instruction::{AccountMeta, Instruction},
-    message::Message,
     pubkey,
     pubkey::Pubkey,
     signature::{Keypair, Signer},
     system_program,
-    transaction::Transaction,
 };
 
 use meetups::{
-    instruction::{CreateEvent, InitEventManager, InitIdentityProfile, UpdateEvent},
-    EventEntry, ID as PROGRAM_ID,
+    instruction::{CreateEvent, InitEventManager, InitIdentityProfile, OpenEvent, UpdateEvent},
+    EventEntry, EventStatusType, ID as PROGRAM_ID,
 };
 
 use std::path::PathBuf;
 use std::str::FromStr;
+
+mod helpers;
 
 fn read_meetups_program() -> Vec<u8> {
     let mut so_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
@@ -73,13 +73,7 @@ pub fn meetups_program_test() {
         .data(),
     };
 
-    let message = Message::new(&[instruction], Some(&payer_pk));
-    let tx = Transaction::new(&[&payer_kp], message, svm.latest_blockhash());
-    let tx_result = svm.send_transaction(tx);
-
-    assert!(tx_result.is_ok());
-    let result = tx_result.unwrap();
-
+    let result = helpers::process_instruction(&mut svm, instruction, &payer_kp);
     assert!(result
         .logs
         .contains(&format!("Program log: Instruction: InitEventManager")));
@@ -105,13 +99,7 @@ pub fn meetups_program_test() {
         .data(),
     };
 
-    let message = Message::new(&[instruction], Some(&payer_pk));
-    let tx = Transaction::new(&[&payer_kp], message, svm.latest_blockhash());
-    let tx_result = svm.send_transaction(tx);
-
-    assert!(tx_result.is_ok());
-    let result = tx_result.unwrap();
-
+    let result = helpers::process_instruction(&mut svm, instruction, &payer_kp);
     assert!(result
         .logs
         .contains(&format!("Program log: Instruction: InitIdentityProfile")));
@@ -157,13 +145,7 @@ pub fn meetups_program_test() {
         .data(),
     };
 
-    let message = Message::new(&[instruction], Some(&payer_pk));
-    let tx = Transaction::new(&[&payer_kp], message, svm.latest_blockhash());
-    let tx_result = svm.send_transaction(tx);
-
-    assert!(tx_result.is_ok());
-    let result = tx_result.unwrap();
-
+    let result = helpers::process_instruction(&mut svm, instruction, &payer_kp);
     assert!(result
         .logs
         .contains(&format!("Program log: Instruction: CreateEvent")));
@@ -198,16 +180,91 @@ pub fn meetups_program_test() {
         .data(),
     };
 
-    let message = Message::new(&[instruction], Some(&payer_pk));
-    let tx = Transaction::new(&[&payer_kp], message, svm.latest_blockhash());
-    let tx_result = svm.send_transaction(tx);
-
-    assert!(tx_result.is_ok());
-    let result = tx_result.unwrap();
-
+    let result = helpers::process_instruction(&mut svm, instruction, &payer_kp);
     assert!(result
         .logs
         .contains(&format!("Program log: Instruction: UpdateEvent")));
+
+    let event_account = svm.get_account(&event).unwrap();
+    let event_data = EventEntry::try_deserialize(&mut &event_account.data[..]).unwrap();
+    assert_eq!(event_data.status, EventStatusType::Pending);
+
+    // open an event
+    let instruction = Instruction {
+        program_id,
+        accounts: vec![
+            AccountMeta::new(payer_pk, true), // signer (writable, signer)
+            AccountMeta::new(identity_profile, false), // identity_profile PDA
+            AccountMeta::new(host_profile, false), // host_profile PDA
+            AccountMeta::new(event, false),   // event PDA (writable)
+            AccountMeta::new_readonly(system_program::ID, false), // system program
+        ],
+        data: OpenEvent {
+            event_manager_id: AnchorPubkey::new_from_array(event_manager.to_bytes()),
+            year,
+            month,
+            day,
+        }
+        .data(),
+    };
+
+    let result = helpers::process_instruction(&mut svm, instruction, &payer_kp);
+    assert!(result
+        .logs
+        .contains(&format!("Program log: Instruction: OpenEvent")));
+
+    let event_account = svm.get_account(&event).unwrap();
+    let event_data = EventEntry::try_deserialize(&mut &event_account.data[..]).unwrap();
+    assert_eq!(event_data.status, EventStatusType::Open);
+
+    // // close an event
+    // let instruction = Instruction {
+    //     program_id,
+    //     accounts: vec![
+    //         AccountMeta::new(payer_pk, true), // signer (writable, signer)
+    //         AccountMeta::new(identity_profile, false), // identity_profile PDA
+    //         AccountMeta::new(host_profile, false), // host_profile PDA
+    //         AccountMeta::new(event, false),   // event PDA (writable)
+    //         AccountMeta::new_readonly(system_program::ID, false), // system program
+    //     ],
+    //     data: CloseEvent {
+    //         event_manager_id: AnchorPubkey::new_from_array(event_manager.to_bytes()),
+    //         year,
+    //         month,
+    //         day,
+    //     }
+    //     .data(),
+    // };
+
+    // let result = helpers::process_instruction(&mut svm, instruction, &payer_kp);
+    // assert!(result
+    //     .logs
+    //     .contains(&format!("Program log: Instruction: CloseEvent")));
+
+    // let event_account = svm.get_account(&event).unwrap();
+    // let event_data = EventEntry::try_deserialize(&mut &event_account.data[..]).unwrap();
+    // assert_eq!(event_data.status, EventStatusType::Closed);
+
+    // // re-open an event
+    // let instruction = Instruction {
+    //     program_id,
+    //     accounts: vec![
+    //         AccountMeta::new(payer_pk, true), // signer (writable, signer)
+    //         AccountMeta::new(identity_profile, false), // identity_profile PDA
+    //         AccountMeta::new(host_profile, false), // host_profile PDA
+    //         AccountMeta::new(event, false),   // event PDA (writable)
+    //         AccountMeta::new_readonly(system_program::ID, false), // system program
+    //     ],
+    //     data: OpenEvent {
+    //         event_manager_id: AnchorPubkey::new_from_array(event_manager.to_bytes()),
+    //         year,
+    //         month,
+    //         day,
+    //     }
+    //     .data(),
+    // };
+
+    // let _ = helpers::process_instruction(&mut svm, instruction, &payer_kp);
 
     // todo!();
 }
